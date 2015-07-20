@@ -35,8 +35,14 @@ class AStar
     end
 
     def add(priority, item)
-      @list << [priority, @list.length, item]
-      @list.sort!
+      new_item = [priority, @list.length, item]
+      (0...@list.length).each do |i|
+        if new_item < @list[i]
+          @list.insert(i, new_item)
+          return self
+        end
+      end
+      @list << new_item
       self
     end
 
