@@ -1,5 +1,108 @@
-#!/usr/bin/python
+#!/usr/bin/env ruby
 
-# To solve this problem, make the './run' executable handle any 
-# appropriate command line arguments and stdin and output the
-# solution to stdout.
+class AStar
+  def initialize(adjacency_func, cost_func, distance_func)
+    @adjacency = adjacency_func
+    @cost = cost_func
+    @distance = distance_func
+  end
+
+  def find_path(start, goal)
+    been_there = {}
+    pqueue = PriorityQueue.new
+    pqueue << [1, [start, [], 0]]
+    while !pqueue.empty?
+      spot, path_so_far, cost_so_far = pqueue.next
+      next if been_there[spot]
+      newpath = path_so_far + [spot]
+      return newpath if (spot == goal)
+      been_there[spot] = 1
+      @adjacency.call(spot).each do |newspot|
+        next if been_there[newspot]
+        tcost = @cost.call(spot, newspot)
+        next unless tcost
+        newcost = cost_so_far + tcost
+        pqueue << [newcost + @distance.call(goal, newspot),
+                    [newspot, newpath, newcost]]
+      end
+    end
+    return nil
+  end
+
+  class PriorityQueue
+    def initialize
+      @list = []
+    end
+
+    def add(priority, item)
+      @list << [priority, @list.length, item]
+      @list.sort!
+      self
+    end
+
+    def <<(pritem)
+      add(*pritem)
+    end
+
+    def next
+      @list.shift[2]
+    end
+
+    def empty?
+      @list.empty?
+    end
+  end
+
+end
+
+#map = File.open('example1').readlines.map(&:strip)
+map = $stdin.readlines.map(&:strip)
+
+def find(map, target)
+  map.each_with_index do |row, i|
+    j = row.index(target)
+    return [j, i] if j
+  end
+end
+
+start = find(map, 'S')
+finish = find(map, 'F')
+
+adjacency = ->(location) do
+  available = [
+    [location.first - 1, location.last],
+    [location.first, location.last - 1],
+    [location.first + 1, location.last],
+    [location.first, location.last + 1]
+  ].select do |new_location|
+    new_location.first >= 0 && new_location.last >= 0 &&
+    new_location.first < map.first.length && new_location.last < map.length &&
+    ['S', '-', 'F'].include?(map[new_location.last][new_location.first])
+  end
+end
+
+cost_func = ->(a, b) { 1 }
+distance_func = ->(location, finish) do
+  Math.sqrt((location.last - finish.last)**2 + (location.first + finish.first)**2)
+end
+
+astar = AStar.new(adjacency, cost_func, distance_func)
+
+path = astar.find_path(start, finish)
+
+exit unless path
+
+path.each_with_index do |now, index|
+  next if index == 0
+  last = path[index - 1]
+  if now.first > last.first
+    puts 'E'
+  elsif now.last > last.last
+    puts 'S'
+  elsif now.first < last.first
+    puts 'W'
+  else
+    puts 'N'
+  end
+end
+
