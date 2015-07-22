@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative 'pqueue'
+require_relative 'priority_queue'
+
+#require 'byebug'
 
 class AStar
   def initialize(adjacency_func, cost_func, distance_func)
@@ -11,10 +13,11 @@ class AStar
 
   def find_path(start, goal)
     been_there = {}
-    pqueue = PQueue.new
-    pqueue << [1, start, [], 0]
+    pqueue = Containers::PriorityQueue.new
+    #debugger
+    pqueue.push([start, [], 0], 1)
     while !pqueue.empty?
-      priority, spot, path_so_far, cost_so_far = pqueue.shift
+      spot, path_so_far, cost_so_far = pqueue.pop
       next if been_there[spot]
       newpath = path_so_far + [spot]
       return newpath if (spot == goal)
@@ -22,8 +25,8 @@ class AStar
       @adjacency.call(spot).each do |newspot|
         next if been_there[newspot]
         newcost = cost_so_far + 1
-        pqueue << [@distance.call(goal, newspot),
-                    newspot, newpath, newcost]
+        pqueue.push([newspot, newpath, newcost],
+                    -@distance.call(goal, newspot))
       end
     end
     return nil
@@ -31,7 +34,9 @@ class AStar
 end
 
 
-map = $stdin.readlines.map(&:strip)
+file = $stdin
+#file = File.open('example1')
+map = file.readlines.map(&:strip)
 
 def find(map, target)
   map.each_with_index do |row, i|
@@ -44,7 +49,7 @@ start = find(map, 'S')
 finish = find(map, 'F')
 
 adjacency = ->(location) do
-  available = [
+  [
     [location.first - 1, location.last],
     [location.first, location.last - 1],
     [location.first + 1, location.last],
