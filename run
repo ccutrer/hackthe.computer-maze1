@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require_relative 'pqueue'
+
 class AStar
   def initialize(adjacency_func, cost_func, distance_func)
     @adjacency = adjacency_func
@@ -9,10 +11,10 @@ class AStar
 
   def find_path(start, goal)
     been_there = {}
-    pqueue = PriorityQueue.new
-    pqueue << [1, [start, [], 0]]
+    pqueue = PQueue.new
+    pqueue << [1, start, [], 0]
     while !pqueue.empty?
-      spot, path_so_far, cost_so_far = pqueue.next
+      priority, spot, path_so_far, cost_so_far = pqueue.shift
       next if been_there[spot]
       newpath = path_so_far + [spot]
       return newpath if (spot == goal)
@@ -21,43 +23,13 @@ class AStar
         next if been_there[newspot]
         newcost = cost_so_far + 1
         pqueue << [@distance.call(goal, newspot),
-                    [newspot, newpath, newcost]]
+                    newspot, newpath, newcost]
       end
     end
     return nil
   end
-
-  class PriorityQueue
-    def initialize
-      @list = []
-    end
-
-    def add(priority, item)
-      new_item = [priority, @list.length, item]
-      (0...@list.length).each do |i|
-        if (new_item <=> @list[i]) <= 0
-          @list.insert(i, new_item)
-          return self
-        end
-      end
-      @list << new_item
-      self
-    end
-
-    def <<(pritem)
-      add(*pritem)
-    end
-
-    def next
-      @list.shift[2]
-    end
-
-    def empty?
-      @list.empty?
-    end
-  end
-
 end
+
 
 map = $stdin.readlines.map(&:strip)
 
