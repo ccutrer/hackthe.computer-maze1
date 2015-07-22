@@ -37,7 +37,7 @@ class AStar
     def add(priority, item)
       new_item = [priority, @list.length, item]
       (0...@list.length).each do |i|
-        if (new_item <=> @list[i]) < 0
+        if (new_item <=> @list[i]) <= 0
           @list.insert(i, new_item)
           return self
         end
