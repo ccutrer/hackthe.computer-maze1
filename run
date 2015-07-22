@@ -20,7 +20,7 @@ class AStar
       @adjacency.call(spot).each do |newspot|
         next if been_there[newspot]
         newcost = cost_so_far + 1
-        pqueue << [newcost + @distance.call(goal, newspot),
+        pqueue << [@distance.call(goal, newspot),
                     [newspot, newpath, newcost]]
       end
     end
