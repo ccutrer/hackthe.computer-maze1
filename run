@@ -88,7 +88,7 @@ end
 
 cost_func = ->(a, b) { 1 }
 distance_func = ->(location, finish) do
-  (finish.last - location.last).abs + (finish.first - location.first).abs
+  ((finish.last - location.last).abs + (finish.first - location.first).abs) / 2
 end
 
 astar = AStar.new(adjacency, cost_func, distance_func)
