@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative 'priority_queue'
-
 require 'set'
+
+require_relative 'priority_queue'
 
 class AStar
   def initialize(adjacency_func, cost_func, distance_func)
