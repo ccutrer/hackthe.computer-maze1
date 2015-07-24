@@ -3,7 +3,10 @@
 require_relative 'priority_queue'
 
 require 'set'
-#require 'byebug'
+begin
+  require 'byebug'
+rescue
+end
 
 class AStar
   def initialize(adjacency_func, cost_func, distance_func)
@@ -74,7 +77,8 @@ path = astar.find_path(start, finish)
 
 exit unless path
 
-path.reverse.each_with_index do |now, index|
+path = path.reverse
+path.each_with_index do |now, index|
   next if index == 0
   last = path[index - 1]
   if now.first > last.first
