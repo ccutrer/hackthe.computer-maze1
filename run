@@ -2,7 +2,8 @@
 
 require_relative 'priority_queue'
 
-#require 'byebug'
+require 'set'
+require 'byebug'
 
 class AStar
   def initialize(adjacency_func, cost_func, distance_func)
@@ -12,18 +13,19 @@ class AStar
   end
 
   def find_path(start, goal)
-    been_there = {}
+    been_there = Set.new
     pqueue = Containers::PriorityQueue.new
-    #debugger
     pqueue.push([start, [], 0], 1)
     while !pqueue.empty?
       spot, path_so_far, cost_so_far = pqueue.pop
-      next if been_there[spot]
+      next if been_there.include?(spot)
       newpath = path_so_far + [spot]
-      return newpath if (spot == goal)
-      been_there[spot] = 1
+      if (spot == goal)
+        return newpath
+      end
+      been_there << spot
       @adjacency.call(spot).each do |newspot|
-        next if been_there[newspot]
+        next if been_there.include?(newspot)
         newcost = cost_so_far + 1
         pqueue.push([newspot, newpath, newcost],
                     -@distance.call(goal, newspot))
@@ -35,7 +37,7 @@ end
 
 
 file = $stdin
-#file = File.open('example1')
+file = File.open(ARGV.first) unless ARGV.empty?
 map = file.readlines.map(&:strip)
 
 def find(map, target)
