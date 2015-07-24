@@ -3,7 +3,7 @@
 require_relative 'priority_queue'
 
 require 'set'
-require 'byebug'
+#require 'byebug'
 
 class AStar
   def initialize(adjacency_func, cost_func, distance_func)
