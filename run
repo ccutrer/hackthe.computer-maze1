@@ -64,8 +64,8 @@ def find(map, target)
   end
 end
 
-start = find(map, 'S')
-finish = find(map, 'F')
+start = find(map, 'F')
+finish = find(map, 'S')
 
 adjacency = ->(location) do
   [
@@ -91,7 +91,7 @@ path = astar.find_path(start, finish)
 
 exit unless path
 
-#path = path.reverse
+path = path.reverse
 path.each_with_index do |now, index|
   next if index == 0
   last = path[index - 1]
