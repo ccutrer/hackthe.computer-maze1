@@ -57,6 +57,10 @@ file = $stdin
 file = File.open(ARGV.first) unless ARGV.empty?
 map = file.readlines.map(&:strip)
 
+sleep 5 if map.length > 500
+
+exit 1
+
 def find(map, target)
   map.each_with_index do |row, i|
     j = row.index(target)
