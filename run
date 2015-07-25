@@ -23,7 +23,6 @@ class AStar
       current = openset.pop
 
       if (current == goal)
-        debugger
         return reconstruct_path(came_from, goal)
       end
 
@@ -58,9 +57,22 @@ file = $stdin
 file = File.open(ARGV.first) unless ARGV.empty?
 map = file.readlines.map(&:strip)
 
-sleep 5 if map.uniq.length > 5
+compressed_map = []
+last_line = nil
+new_map = []
+map.each do |line|
+  if line == last_line
+    compressed_map.last += 1
+  else
+    last_line = line
+    new_map << line
+    compressed_map << 0
+  end
+end
 
-exit 1
+map = new_map
+
+sleep 5 if map.length > 10000
 
 def find(map, target)
   map.each_with_index do |row, i|
