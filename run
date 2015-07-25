@@ -57,7 +57,7 @@ file = $stdin
 file = File.open(ARGV.first) unless ARGV.empty?
 map = file.readlines.map(&:strip)
 
-sleep 5 if map.first.length >= 100
+sleep 5 if map.first.length >= 150
 
 exit 1
 
