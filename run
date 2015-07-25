@@ -72,7 +72,7 @@ end
 
 map = new_map
 
-sleep 5 if map.length > 10000
+sleep 5 if map.length >= 10000
 exit
 
 def find(map, target)
