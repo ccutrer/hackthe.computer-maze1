@@ -62,7 +62,7 @@ last_line = nil
 new_map = []
 map.each do |line|
   if line == last_line
-    compressed_map.last += 1
+    compressed_map[-1] += 1
   else
     last_line = line
     new_map << line
@@ -71,9 +71,6 @@ map.each do |line|
 end
 
 map = new_map
-
-sleep 5 if map.length >= 10000
-exit
 
 def find(map, target)
   map.each_with_index do |row, i|
@@ -117,10 +114,12 @@ path.each_with_index do |now, index|
     puts 'E'
   elsif now.last > last.last
     puts 'S'
+    compressed_map[last.last].times { puts 'S' }
   elsif now.first < last.first
     puts 'W'
   else
     puts 'N'
+    compressed_map[now.last].times { puts 'N' }
   end
 end
 
